@@ -1,0 +1,38 @@
+  "use strict";
+		
+		console.log("@@@@@@ POST Name " + name  );					
+		console.log("@@@@@@ POST body " + body  );	
+		
+
+        var comment = {'author': name, 'body': body}
+
+        if (email != "") {
+            comment['email'] = email
+        }
+
+		posts.findOne({'permalink': permalink},function(err, post) {
+		            "use strict";
+					
+		console.log("***** POST ID" + post.title );					
+
+		console.log("**** POST Name " + name  );					
+		console.log("**** POST body " + body  );					
+
+		var commArray = post.comments;
+		console.log(" Already existing array " + 	commArray );
+
+		
+		if( Object.prototype.toString.call( commArray ) === '[object Array]' ) {
+
+			console.log(" Already existing array type" + 		post.comments  );
+			post.comments.push(comment);
+
+		}
+
+
+		db.collection('posts').update(
+			{ _id : post._id} , { '$set' : { 'comments' : post.comments } },  function(err, updated) {
+
+            callback("POSTED # of docs " + updated);
+		 });
+									

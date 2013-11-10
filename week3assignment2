@@ -1,0 +1,12 @@
+		db.collection('posts').insert( post,function(err, updated) { 
+
+			if(err) callback(Error("insertEntry NYI"), null);
+
+            console.log(" *** POST ADDED ******* ");
+
+            console.log(post);
+			
+			callback("ALL GOOD");
+			
+
+		});

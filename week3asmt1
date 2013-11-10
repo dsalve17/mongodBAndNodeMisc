@@ -1,0 +1,75 @@
+var MongoClient = require('mongodb').MongoClient;
+
+
+MongoClient.connect('mongodb://localhost:27017/school', function(err, db) {
+    if(err) throw err;
+
+var studentsArray = db.collection("students");
+var cursor = studentsArray.find();
+var numberofCallBacks = 0;
+
+//cursor.limit(6);
+cursor.each(function(err, doc) {
+ if(err) throw err;
+
+if ( doc != null ){  
+
+for (var i = 0; i < doc.scores.length; i++){
+
+	var curObj = doc.scores[i];
+	var type = curObj.type;
+	var val = curObj.score;
+	var currScore;
+	var prevScore;
+	
+	if (type == 'homework'){
+		currScore = curObj.score;
+
+
+		if ( prevScore != null && !currScore != null){
+
+			var removeIndex =  currScore < prevScore ? i : i-1;
+			var removeScore = doc.scores[removeIndex].score;
+				
+			var oldArray = doc.scores;
+			var removed = oldArray.splice(removeIndex,1) ;	
+			
+    var query = { "_id" : doc._id };		
+	var operator = { '$set' : { 'date' : new Date() } };	
+
+
+	console.dir('** TRY FOR  ' + doc._id);
+
+	//For Adding New Array
+	db.collection('students').update( { "_id" : doc._id },  { '$set' : { 'scores' : oldArray } },  function(err, updated) {
+  
+//	db.collection('students').update( { "_id" : doc._id }, { '$unset' : { 'scoresAdded' : "" } } ,    function(err, updated) {
+  
+  
+    if(err) throw err;
+
+	console.dir('Updated ' + updated);
+	
+
+	numberofCallBacks++;
+	console.dir('CallBack # ' + numberofCallBacks);
+	if ( numberofCallBacks == 200) {
+		console.dir('Closing *********' );
+		return db.close();
+	}
+	
+
+
+});
+
+				
+	}
+	prevScore = currScore;
+
+}}
+
+}
+
+});
+
+});

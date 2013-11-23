@@ -1,3 +1,11 @@
+use blog;
+db.posts.aggregate(
+{"$unwind":"$comments"},
+{"$group":{"_id":"$comments.author","author":{$sum:1}}},
+{"$sort":{"author":1}}
+)
+
+
 //Assignment 2
 
 use test;
@@ -16,3 +24,17 @@ avgPop:{ $avg : "$totalPop" } }
  	
 }
 						  )
+Assignment 3
+
+use test;
+db.grades.aggregate(
+	{"$unwind":"$scores"}
+	,{ $match: { "scores.type" : { $in : [ "exam","homework"] } }  }
+	,{ $group :
+	{ _id : { class_id : "$class_id"  },
+	 avgScore : { $avg : "$scores.score"   }
+							  } 
+							  }
+ ,{ $sort: { acgScore: -1 } }
+ 							  	
+)

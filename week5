@@ -1,0 +1,18 @@
+//Assignment 2
+
+use test;
+db.zips.aggregate(
+	
+	{ $match: { state: {$in:['CA','NY'] } }  }
+	
+	,{ $group :
+	{ _id : { state : "$state", city : "$city" },
+	 totalPop : { $sum : "$pop"   }
+							  } 
+							  }
+,{ $match : {totalPop : { $gte : 25000 } } }
+,{ $group : { _id:{},
+avgPop:{ $avg : "$totalPop" } } 
+ 	
+}
+						  )
